@@ -59,3 +59,9 @@ Certain platforms, like web, can't use `load_folder` to load assets so this libr
 ```
 
 If you insert this Resource, `ImageAssetFolder` will be ignored and the plugin will only load assets based on the provided list.
+
+## Bevy version compatibility
+
+|trve_bevy_image|bevy|
+|---|---|
+|0.1|0.12|
