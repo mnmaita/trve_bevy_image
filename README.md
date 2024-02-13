@@ -6,6 +6,26 @@ An opinionated Bevy plugin to load Image Assets quickly and easily. Ideal for Ga
 
 This plugin is meant to be a convenience tool to load all image assets for your game at startup, ideal for small projects and prototypes.
 
+To use it, add it to your Cargo.toml file like this:
+
+```toml
+trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image" }
+```
+
+Remember you can also target tags, commits and branches with this method:
+
+```toml
+trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", tag = "v0.1.0" }
+```
+
+```toml
+trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", branch = "test" }
+```
+
+```toml
+trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", rev = "03ee540ad7afba7822a73139169c635093127fba" }
+```
+
 ### Default usage and overriding default behavior
 
 By default, it will load all assets from an "img" directory under your "assets" folder. You can override this directory by using the `ImageAssetFolder` Resource:
