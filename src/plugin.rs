@@ -125,7 +125,7 @@ fn update_image_assets_load_state(
         }
     } else if let Some(image_folder_handle) = image_folder_handle {
         *textures_load_state = asset_server
-            .recursive_dependency_load_state(image_folder_handle.clone())
+            .recursive_dependency_load_state(&image_folder_handle.0)
             .into()
     }
 }
