@@ -23,7 +23,7 @@ trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", branch =
 ```
 
 ```toml
-trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", rev = "03ee540ad7afba7822a73139169c635093127fba" }
+trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", rev = "some-sha" }
 ```
 
 ### Default usage and overriding default behavior
@@ -38,27 +38,43 @@ app.add_plugins(TrveImagePlugin);
 
 // You insert this Resource and use the `new` function
 // which accepts any parameter that can be turned into an `AssetPath`.
-app.insert_resource(ImageAssetFolder::new("images"));
+app.insert_resource(ImageAssetFolder::new("pngs"));
 ```
 
-This will load all assets from `assets/images` by using `AssetServer`'s `load_folder` method.
+This will load all assets from `assets/pngs` by using `AssetServer`'s `load_folder` method.
 
 ### Loading a list of assets
 
-Certain platforms, like web, can't use `load_folder` to load assets so this library provides an override via the `ImageAssetList` Resource. This allows you to load a list of assets from your `assets` folder.
+Certain platforms, like web, can't use `load_folder` to load assets so this library provides an override via the `ImageAssetList` Resource.
 
-```rs
+This allows you to load a list of assets from the folder specified in the `ImageAssetFolder` Resource, within the `assets` directory.
+
+```rust
+    // This will attempt to load `assets/img/texture1.png`, `assets/img/texture2.png` and `assets/img/texture3.png`.
     app.insert_resource(ImageAssetList::new(
         [
-            "textures/player.png",
-            "textures/enemy.png",
-            "textures/background.png",
+            "texture1.png",
+            "texture2.png",
+            "texture3.png",
         ]
         .into(),
     ));
 ```
 
-If you insert this Resource, `ImageAssetFolder` will be ignored and the plugin will only load assets based on the provided list.
+```rust
+    // This will attempt to load `assets/pngs/texture1.png`, `assets/pngs/texture2.png` and `assets/pngs/texture3.png`.
+    app.insert_resource(ImageAssetFolder::new("pngs"));
+    app.insert_resource(ImageAssetList::new(
+        [
+            "texture1.png",
+            "texture2.png",
+            "texture3.png",
+        ]
+        .into(),
+    ));
+```
+
+If you insert this Resource the plugin will **only** load the assets provided in the list.
 
 ## Bevy version compatibility
 
