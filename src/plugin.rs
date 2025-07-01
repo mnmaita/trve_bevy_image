@@ -3,8 +3,6 @@ use bevy::{
     prelude::*,
 };
 
-const IMAGE_ASSET_FOLDER: &str = "img";
-
 pub struct TrveImagePlugin;
 
 impl Plugin for TrveImagePlugin {
@@ -16,7 +14,7 @@ impl Plugin for TrveImagePlugin {
         );
         app.add_systems(
             Update,
-            update_image_assets_load_state.run_if(not(resource_equals(ImageLoadState::LOADED))),
+            update_image_assets_load_state.run_if(not(image_assets_loaded)),
         );
     }
 }
@@ -31,6 +29,8 @@ impl Plugin for TrveImagePlugin {
 pub struct ImageAssetFolder<'a>(AssetPath<'a>);
 
 impl<'a> ImageAssetFolder<'a> {
+    const DEFAULT_FOLDER_NAME: &'static str = "img";
+
     pub fn new(path: impl Into<AssetPath<'a>>) -> Self {
         Self(path.into())
     }
@@ -38,7 +38,7 @@ impl<'a> ImageAssetFolder<'a> {
 
 impl Default for ImageAssetFolder<'_> {
     fn default() -> Self {
-        Self(IMAGE_ASSET_FOLDER.into())
+        Self(Self::DEFAULT_FOLDER_NAME.into())
     }
 }
 
@@ -74,22 +74,18 @@ pub struct ImageAssetList<'a>(Vec<AssetPath<'a>>);
 
 impl<'a> ImageAssetList<'a> {
     pub fn new(paths: Vec<impl Into<AssetPath<'a>>>) -> Self {
-        let asset_paths: Vec<AssetPath<'a>> = paths.into_iter().map(|path| path.into()).collect();
+        let asset_paths: Vec<_> = paths.into_iter().map(|path| path.into()).collect();
         Self(asset_paths)
     }
 }
 
-#[derive(Resource, PartialEq, Deref)]
-struct ImageLoadState(RecursiveDependencyLoadState);
+#[derive(Resource, Deref)]
+pub struct ImageLoadState(RecursiveDependencyLoadState);
 
 impl Default for ImageLoadState {
     fn default() -> Self {
         Self(RecursiveDependencyLoadState::NotLoaded)
     }
-}
-
-impl ImageLoadState {
-    const LOADED: Self = Self(RecursiveDependencyLoadState::Loaded);
 }
 
 #[derive(Resource, Default, Deref, DerefMut)]
@@ -112,23 +108,18 @@ fn load_images(
     image_folder: Res<ImageAssetFolder<'static>>,
     image_asset_list: Option<Res<ImageAssetList<'static>>>,
 ) {
-    if cfg!(not(target_family = "wasm")) {
-        if image_asset_list.is_none() {
-            // TODO: Verify that files in the directory are actually Image handles
-            commands.insert_resource(ImageFolderHandle(
-                asset_server.load_folder(image_folder.0.clone()),
-            ));
-            return;
-        }
+    if cfg!(not(target_family = "wasm")) && image_asset_list.is_none() {
+        // TODO: Verify that files in the directory are actually Image handles
+        commands.insert_resource(ImageFolderHandle(
+            asset_server.load_folder(image_folder.0.clone()),
+        ));
+        return;
     }
 
     if let Some(image_asset_list) = image_asset_list {
         let load_image_asset =
             |path| asset_server.load::<Image>(format!("{}/{path}", *image_folder));
-        let handles: Vec<Handle<Image>> = match image_asset_list.is_empty() {
-            true => Vec::default(),
-            false => image_asset_list.iter().map(load_image_asset).collect(),
-        };
+        let handles: Vec<_> = image_asset_list.iter().map(load_image_asset).collect();
         commands.insert_resource(ImageHandles(handles));
     }
 }
@@ -140,18 +131,15 @@ fn update_image_assets_load_state(
     image_folder_handle: Option<Res<ImageFolderHandle>>,
     image_asset_list: Option<Res<ImageAssetList<'static>>>,
 ) {
-    if cfg!(not(target_family = "wasm")) {
-        if image_asset_list.is_none() {
-            image_load_state.0 =
-                asset_server.recursive_dependency_load_state(&image_folder_handle.unwrap().0);
-            return;
-        }
+    if cfg!(not(target_family = "wasm")) && image_asset_list.is_none() {
+        image_load_state.0 =
+            asset_server.recursive_dependency_load_state(&image_folder_handle.unwrap().0);
+        return;
     }
 
     if let Some(image_handles) = image_handles {
         let all_loaded = image_handles.iter().all(|handle| {
-            if RecursiveDependencyLoadState::Failed
-                == asset_server.recursive_dependency_load_state(handle)
+            if asset_server.recursive_dependency_load_state(handle).is_failed()
             {
                 if let Some(path) = handle.path() {
                     info!("Asset '{path}' failed to load. Make sure the file name is correct and is an image.");
@@ -168,6 +156,6 @@ fn update_image_assets_load_state(
     }
 }
 
-pub fn image_assets_loaded() -> impl Condition<()> {
-    IntoSystem::into_system(resource_equals(ImageLoadState::LOADED))
+pub fn image_assets_loaded(image_load_state: Res<ImageLoadState>) -> bool {
+    image_load_state.is_loaded()
 }
