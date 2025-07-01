@@ -15,7 +15,7 @@ trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image" }
 Remember you can also target tags, commits and branches with this method:
 
 ```toml
-trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", tag = "v0.5.0" }
+trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", tag = "v0.6.0" }
 ```
 
 ```toml
@@ -80,6 +80,7 @@ If you insert this Resource the plugin will **only** load the assets provided in
 
 | trve_bevy_image | bevy |
 | --------------- | ---- |
+| 0.6             | 0.16 |
 | 0.5             | 0.15 |
 | 0.3, 0.4        | 0.14 |
 | 0.2             | 0.13 |
