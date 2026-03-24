@@ -3,7 +3,7 @@ use bevy::{
     asset::{AssetPath, AssetServer, Handle, LoadedFolder, RecursiveDependencyLoadState},
     ecs::{
         resource::Resource,
-        schedule::{common_conditions::not, IntoScheduleConfigs},
+        schedule::{IntoScheduleConfigs, common_conditions::not},
         system::{Commands, Res, ResMut},
     },
     image::Image,
@@ -68,6 +68,10 @@ impl std::fmt::Display for ImageAssetFolder<'_> {
 /// Example:
 ///
 /// ```
+/// use trve_bevy_image::ImageAssetList;
+///
+/// let mut app = bevy::app::App::new();
+///
 /// app.insert_resource(ImageAssetList::new(
 ///     [
 ///         "image1.png",
