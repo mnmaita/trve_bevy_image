@@ -1,6 +1,14 @@
 use bevy::{
-    asset::{AssetPath, LoadedFolder, RecursiveDependencyLoadState},
-    prelude::*,
+    app::{App, Plugin, Startup, Update},
+    asset::{AssetPath, AssetServer, Handle, LoadedFolder, RecursiveDependencyLoadState},
+    ecs::{
+        resource::Resource,
+        schedule::{IntoScheduleConfigs, common_conditions::not},
+        system::{Commands, Res, ResMut},
+    },
+    image::Image,
+    log::info,
+    prelude::{Deref, DerefMut},
 };
 
 pub struct TrveImagePlugin;
@@ -60,6 +68,10 @@ impl std::fmt::Display for ImageAssetFolder<'_> {
 /// Example:
 ///
 /// ```
+/// use trve_bevy_image::ImageAssetList;
+///
+/// let mut app = bevy::app::App::new();
+///
 /// app.insert_resource(ImageAssetList::new(
 ///     [
 ///         "image1.png",
