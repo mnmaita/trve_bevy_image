@@ -9,17 +9,7 @@ This plugin is meant to be a convenience tool to load all image assets for your 
 To use it, add it to your Cargo.toml file like this:
 
 ```toml
-trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image" }
-```
-
-Remember you can also target tags, commits and branches with this method:
-
-```toml
-trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", tag = "v0.6.0" }
-```
-
-```toml
-trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", branch = "test" }
+trve_bevy_image = { git = "https://github.com/mnmaita/trve_bevy_image", tag = "v0.7.0" }
 ```
 
 ```toml
@@ -80,6 +70,7 @@ If you insert this Resource the plugin will **only** load the assets provided in
 
 | trve_bevy_image | bevy |
 | --------------- | ---- |
+| 0.7             | 0.17 |
 | 0.6             | 0.16 |
 | 0.5             | 0.15 |
 | 0.3, 0.4        | 0.14 |
