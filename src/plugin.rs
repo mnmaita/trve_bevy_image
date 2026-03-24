@@ -1,6 +1,14 @@
 use bevy::{
-    asset::{AssetPath, LoadedFolder, RecursiveDependencyLoadState},
-    prelude::*,
+    app::{App, Plugin, Startup, Update},
+    asset::{AssetPath, AssetServer, Handle, LoadedFolder, RecursiveDependencyLoadState},
+    ecs::{
+        resource::Resource,
+        schedule::{common_conditions::not, IntoScheduleConfigs},
+        system::{Commands, Res, ResMut},
+    },
+    image::Image,
+    log::info,
+    prelude::{Deref, DerefMut},
 };
 
 pub struct TrveImagePlugin;
